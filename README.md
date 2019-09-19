@@ -25,5 +25,3 @@ Install requirements ```pip install -r requirements.txt```
 Run Script: ```audio_silence_splitter.py audio_file.mp3```
 
 Wait. It takes a long time. Maybe go watch a movie. 
-
-#TODO: Write tests.

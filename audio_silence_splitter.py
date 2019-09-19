@@ -18,7 +18,6 @@ TRANSCRIPT_URL = 'https://stream.watsonplatform.net/speech-to-text/api'
 
 
 class AudioEditor(object):
-    CHUNK_NAME_FORMAT = '{0}_{1}_of_{2}.mp3'
 
     def __init__(self, audio_file, output_directory):
         self.audio_file = audio_file

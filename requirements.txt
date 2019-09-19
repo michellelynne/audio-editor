@@ -3,3 +3,5 @@ ffmpeg==1.4
 ffprobe==0.5
 ibm-watson==3.4.0
 pytest==5.1.2
+pydub==0.23.1
+mock==3.0.5
