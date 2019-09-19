@@ -12,8 +12,18 @@ Sign up for a free [IBM Cloud Account](https://cloud.ibm.com/services/speech-to-
 
 Follow the steps for Speech to Text quickstart until you get an API Key.
 
-Save as environment variable IBM_API_KEY
+Save as environment variable IBM_API_KEY (command depends on your environment)
 
-Run Script: audio_silence_splitter.py audio_file.mp3
+Install [Python 3.7](https://www.python.org/downloads/release/python-370/)
+
+Create Python 3.7 virtualenv ```virtualenv -p python3 audio_editor```
+
+Activate virtualenv ```source audio_editor/bin/activate```
+
+Install requirements ```pip install -r requirements.txt```
+
+Run Script: ```audio_silence_splitter.py audio_file.mp3```
+
+Wait. It takes a long time. Maybe go watch a movie. 
 
 #TODO: Write tests.

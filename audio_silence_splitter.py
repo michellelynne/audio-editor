@@ -2,6 +2,7 @@ import argparse
 import csv
 import logging
 import os
+import sys
 import textwrap
 from datetime import datetime
 
@@ -10,6 +11,7 @@ from ibm_watson.speech_to_text_v1 import SpeechToTextV1
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
 IBM_API_KEY = os.getenv('IBM_API_KEY')
 TRANSCRIPT_URL = 'https://stream.watsonplatform.net/speech-to-text/api'
