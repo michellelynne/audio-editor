@@ -56,6 +56,40 @@ class AudioEditor(object):
             )
         return _audio_chunk_file_paths
 
+    def get_speech_recognition_results(self, audio_path):
+        """Get the speech recognition results from IBM Cloud.
+
+        Args:
+            audio_path (str): Name of the audio file.
+
+        Return:
+            DetailedResponse: Response from IBM Cloud.
+
+        """
+        speech_to_text = SpeechToTextV1(iam_apikey=IBM_API_KEY, url=TRANSCRIPT_URL)
+        with open(audio_path, 'rb') as audio_path:
+            speech_recognition_results = speech_to_text.recognize(
+                audio=audio_path,
+                content_type='audio/mp3'
+            )
+        return speech_recognition_results.get_result()
+
+    def get_transcript(self, audio_path):
+        """Get the transcript from IBM Cloud for the Audio File.
+
+        Args:
+            audio_path (str): Name of the audio file.
+
+        Return:
+            str: Transcript of the audio file.
+
+        """
+        speech_recognition_results = self.get_speech_recognition_results(audio_path)
+        _transcript = ''
+        for sr_result in speech_recognition_results['results']:
+            _transcript += ' ' + sr_result['alternatives'][0]['transcript']
+        return _transcript.strip()
+
     def write_transcript_csv(self, audio_chunk_file_paths):
         """Writes transcript of chunks to a CSV file.
 
@@ -72,24 +106,6 @@ class AudioEditor(object):
                 transcript = self.get_transcript(audio_path)
                 chunk_name = os.path.basename(audio_path)
                 writer.writerow([chunk_name, transcript])
-
-    def get_transcript(self, audio_path):
-        """Get the transcript from IBM Cloud for the Audio File.
-
-        Args:
-            audio_path (str): Name of the audio file.
-
-        Return:
-            str: Transcript of the audio file.
-
-        """
-        speech_to_text = SpeechToTextV1(iam_apikey=IBM_API_KEY, url=TRANSCRIPT_URL)
-        with open(audio_path, 'rb') as audio_path:
-            speech_recognition_results = speech_to_text.recognize(audio=audio_path, content_type='audio/mp3')
-        _transcript = ''
-        for sr_result in speech_recognition_results.get_result()['results']:
-            _transcript += ' ' + sr_result['alternatives'][0]['transcript']
-        return _transcript.strip()
 
     def run(self):
         audio_chunk_file_paths = self.write_audio_chunks()
