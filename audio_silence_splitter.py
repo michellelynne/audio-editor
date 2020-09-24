@@ -103,13 +103,13 @@ class AudioEditor(object):
             writer = csv.writer(csv_file)
             writer.writerow(['segment', 'transcript'])
             for audio_path in audio_chunk_file_paths:
-                transcript = self.get_transcript(audio_path)
+                # transcript = self.get_transcript(audio_path)
                 chunk_name = os.path.basename(audio_path)
-                writer.writerow([chunk_name, transcript])
+                # writer.writerow([chunk_name, transcript])
 
     def run(self):
         audio_chunk_file_paths = self.write_audio_chunks()
-        self.write_transcript_csv(audio_chunk_file_paths)
+        # self.write_transcript_csv(audio_chunk_file_paths)
 
 
 def audio_editor_list(audio):

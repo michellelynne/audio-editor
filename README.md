@@ -16,7 +16,9 @@ Save as environment variable IBM_API_KEY (command depends on your environment)
 
 Install [Python 3.7](https://www.python.org/downloads/release/python-370/)
 
-Create Python 3.7 virtualenv ```virtualenv -p python3 audio_editor```
+Install ffmpeg ```brew install ffmpeg```
+
+Create Python 3.7 virtualenv ```python3 -m venv audio_editor```
 
 Activate virtualenv ```source audio_editor/bin/activate```
 
