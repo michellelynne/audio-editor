@@ -4,13 +4,17 @@ import logging
 import os
 import sys
 import textwrap
+from datetime import datetime
 
 from cached_property import cached_property
+from ibm_watson.speech_to_text_v1 import SpeechToTextV1
 from pydub import AudioSegment
 from pydub.silence import split_on_silence
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 LOGGER = logging.getLogger(__name__)
+IBM_API_KEY = os.getenv('IBM_API_KEY')
+TRANSCRIPT_URL = 'https://stream.watsonplatform.net/speech-to-text/api'
 
 
 class AudioEditor(object):
@@ -52,8 +56,59 @@ class AudioEditor(object):
             )
         return _audio_chunk_file_paths
 
+    def get_speech_recognition_results(self, audio_path):
+        """Get the speech recognition results from IBM Cloud.
+
+        Args:
+            audio_path (str): Name of the audio file.
+
+        Return:
+            DetailedResponse: Response from IBM Cloud.
+
+        """
+        speech_to_text = SpeechToTextV1(iam_apikey=IBM_API_KEY, url=TRANSCRIPT_URL)
+        with open(audio_path, 'rb') as audio_path:
+            speech_recognition_results = speech_to_text.recognize(
+                audio=audio_path,
+                content_type='audio/mp3'
+            )
+        return speech_recognition_results.get_result()
+
+    def get_transcript(self, audio_path):
+        """Get the transcript from IBM Cloud for the Audio File.
+
+        Args:
+            audio_path (str): Name of the audio file.
+
+        Return:
+            str: Transcript of the audio file.
+
+        """
+        speech_recognition_results = self.get_speech_recognition_results(audio_path)
+        _transcript = ''
+        for sr_result in speech_recognition_results['results']:
+            _transcript += ' ' + sr_result['alternatives'][0]['transcript']
+        return _transcript.strip()
+
+    def write_transcript_csv(self, audio_chunk_file_paths):
+        """Writes transcript of chunks to a CSV file.
+
+        Args:
+            List<str>: List of audio chunk file paths.
+
+        """
+        csv_file_name = '{}_{}.csv'.format(self.audio_file_name, datetime.now().strftime('%Y%m%d'))
+        csv_file_path = os.path.join(self.output_directory, csv_file_name)
+        with open(csv_file_path, 'w') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(['segment', 'transcript'])
+            for audio_path in audio_chunk_file_paths:
+                # transcript = self.get_transcript(audio_path)
+                chunk_name = os.path.basename(audio_path)
+                # writer.writerow([chunk_name, transcript])
+
     def run(self):
-        self.write_audio_chunks()
+        audio_chunk_file_paths = self.write_audio_chunks()
 
 
 def audio_editor_list(audio):
@@ -78,6 +133,7 @@ def audio_editor_list(audio):
 def get_args():
     description = textwrap.dedent('''
     Separates an audio file when there is silence.
+    Creates a transcript through IBM.
 
     Examples: 
 
